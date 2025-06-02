@@ -1,0 +1,28 @@
+Job Title: Software Engineer
+
+Location: Remote
+
+We are looking for a passionate Software Engineer to join our product development team. The ideal candidate will have experience building scalable web applications and working in agile teams.
+
+Responsibilities:
+- Design, develop, and maintain backend services using Python or Java
+- Build and deploy REST APIs
+- Collaborate with frontend developers to integrate user-facing elements
+- Write clean, maintainable, and well-documented code
+- Participate in code reviews and technical discussions
+
+Required Skills:
+- 2+ years of professional software development experience
+- Strong programming skills in Python, Java, or JavaScript
+- Experience with SQL and NoSQL databases
+- Familiarity with RESTful API design
+- Knowledge of version control systems (Git)
+
+Preferred Qualifications:
+- Experience with cloud platforms (Azure, AWS, GCP)
+- Familiarity with Docker and CI/CD tools
+- Bachelor's degree in Computer Science or related field
+
+Nice to Have:
+- Experience with frontend frameworks like React or Angular
+- Exposure to AI/ML libraries or tools

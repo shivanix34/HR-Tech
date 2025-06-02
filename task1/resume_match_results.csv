@@ -1,0 +1,8 @@
+Resume,Candidate Name,Match Score,Top 5 Skills,Summary (5 Points),Conclusion
+resume1.pdf,Tasiana Ukura,92,"Python, Java, SQL/NoSQL databases, REST API, Git","1. Strong proficiency in Python, Java, JavaScript, and experience with both SQL and NoSQL databases.",Yes. Candidate meets the requirements
+resume3.pdf,Charles McTurland,87,"Python, RESTful APIs, JavaScript, SQL/NoSQL databases, Git","1. Familiarity with AWS cloud platform and Git version control, aligning with preferred qualifications.",Yes. Candidate meets the requirements
+resume4.pdf,Cynthia Dwayne,87,"Python, SQL, Cloud Platforms (AWS/GCP), RESTful API development, JavaScript (React)","1. Mentored junior developers and participated in best practice documentation, indicating strong collaboration skills.",Yes. Candidate meets the requirements
+resume2.pdf,R. Sai Shivani,58,"Python, Git, REST API (Flask), React, Machine Learning/AI","1. Strong Python programming skills demonstrated through multiple projects.
+2. Experience with REST API development using Flask and frontend work with React.
+3. No direct experience with Java, SQL/NoSQL databases, cloud platforms, or CI/CD tools.",No. Candidate lacks core criteria
+resume5.pdf,Blake Thornbrock,38,"SQL, Python, Data Analysis, Product Development, Problem Solving","1. Candidate has strong SQL and some Python experience, but mostly in data analysis and business analytics contexts.",No. Candidate lacks core criteria

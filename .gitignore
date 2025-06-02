@@ -1,0 +1,4 @@
+# .gitignore
+.env
+task1/__pycache__
+.venv
