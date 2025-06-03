@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, File, UploadFile
 from fastapi.responses import FileResponse
 import pandas as pd
 import os
@@ -15,19 +15,14 @@ async def root():
     return {"message": "Employee Analysis API is running"}
 
 @app.post("/analyze/")
-async def analyze_survey():
+async def analyze_survey(file: UploadFile = File(...)):
     """
     Process the survey.csv file from input folder and return analysis results
     """
-    input_file = "input/survey.csv"
-    
-    # Check if input file exists
-    if not os.path.exists(input_file):
-        raise HTTPException(status_code=404, detail="Input file 'input/survey.csv' not found")
     
     try:
         # Read and analyze the CSV
-        df = pd.read_csv(input_file)
+        df = pd.read_csv(file.file)
         result_df = analyze_df(df)
         
         # Save results in the specified format

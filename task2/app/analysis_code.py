@@ -9,7 +9,7 @@ from nltk.sentiment import SentimentIntensityAnalyzer
 from sklearn.preprocessing import LabelEncoder
 from call_api import call_azure_openai
 
-nltk.download('vader_lexicon')
+nltk.data.path.append(os.getenv("NLTK_DATA", "/usr/local/nltk_data"))
 analyzer = SentimentIntensityAnalyzer()
 load_dotenv()
 

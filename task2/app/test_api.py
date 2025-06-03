@@ -3,7 +3,7 @@ import pandas as pd
 import os
 
 # API configuration
-BASE_URL = "http://127.0.0.1:8000"
+BASE_URL = "https://employee-api.whitebay-1dc76ec6.eastus.azurecontainerapps.io"
 
 def check_input_csv():
     """Check if survey.csv exists in input folder"""
@@ -51,8 +51,9 @@ def test_root_endpoint():
 def test_analyze_endpoint():
     """Test the analyze endpoint with survey.csv from input folder"""
     try:
-        # Call the analyze endpoint (no file upload needed)
-        response = requests.post(f"{BASE_URL}/analyze/")
+        with open('input/survey.csv', 'rb') as f:
+            files = {'file': f}
+            response = requests.post(f"{BASE_URL}/analyze/", files=files)
         
         if response.status_code == 200:
             print("Analysis endpoint test passed")
