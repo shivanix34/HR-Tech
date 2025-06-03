@@ -1,23 +1,22 @@
 import pandas as pd
 import numpy as np
-import joblib 
+import joblib
 import os
+import textwrap
 from dotenv import load_dotenv
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
-from call_api import call_azure_openai
 from sklearn.preprocessing import LabelEncoder
-import textwrap
+from call_api import call_azure_openai
 
 nltk.download('vader_lexicon')
 analyzer = SentimentIntensityAnalyzer()
-
 load_dotenv()
 
+# Load once
 attrition_model = joblib.load('models/attrition_model_all_cols.pkl')
-expected_features = joblib.load('models/features_used.pkl')  
+expected_features = joblib.load('models/features_used.pkl')
 
-df = pd.read_csv('input/survey.csv')
 
 def sentiment_pipeline(text):
     if pd.isna(text) or str(text).strip() == '':
@@ -25,7 +24,6 @@ def sentiment_pipeline(text):
     score = analyzer.polarity_scores(str(text))
     return score['compound']
 
-df['sentiment_score_raw'] = df['Feedback'].apply(sentiment_pipeline)
 
 def map_sentiment(score):
     if score >= 0.6:
@@ -39,28 +37,6 @@ def map_sentiment(score):
     else:
         return "Strongly Negative"
 
-df['sentiment_label'] = df['sentiment_score_raw'].apply(map_sentiment)
-df['sentiment_score'] = ((df['sentiment_score_raw'] + 1) / 2).round(2) 
-
-X = df.copy()
-
-drop_cols = ['Feedback', 'Attrition', 'sentiment_score', 'sentiment_score_raw', 'sentiment_label']
-for col in drop_cols:
-    if col in X.columns:
-        X.drop(columns=col, inplace=True)
-
-X = X.loc[:, X.columns.intersection(expected_features)]
-
-cat_cols = X.select_dtypes(include=['object']).columns
-for col in cat_cols:
-    le = LabelEncoder()
-    X[col] = le.fit_transform(X[col].astype(str))
-
-try:
-    attrition_probs = attrition_model.predict_proba(X)[:, 1]
-    df['attrition_score'] = (attrition_probs * 10).round(2) 
-except Exception as e:
-    df['attrition_score'] = (np.random.rand(len(df)) * 10).round(2)
 
 def generate_suggestion(entry):
     prompt = textwrap.dedent(f"""
@@ -98,6 +74,7 @@ def generate_suggestion(entry):
         suggestion = "Suggestion could not be generated due to API error."
     return suggestion if suggestion else "Suggestion could not be generated."
 
+
 def parse_response(text):
     lines = text.split('\n')
     risk = ''
@@ -113,23 +90,41 @@ def parse_response(text):
         suggestion = text.strip()
     return risk, suggestion
 
-records = df.to_dict(orient='records')
-raw_suggestions = [generate_suggestion(r) for r in records]
 
-risks = []
-clean_suggestions = []
-for s in raw_suggestions:
-    risk, sugg = parse_response(s)
-    risks.append(risk)
-    clean_suggestions.append(sugg)
+def analyze_df(df: pd.DataFrame) -> pd.DataFrame:
+    df['sentiment_score_raw'] = df['Feedback'].apply(sentiment_pipeline)
+    df['sentiment_label'] = df['sentiment_score_raw'].apply(map_sentiment)
+    df['sentiment_score'] = ((df['sentiment_score_raw'] + 1) / 2).round(2)
 
-df['attrition_risk'] = risks
-df['suggestion'] = clean_suggestions
+    X = df.copy()
+    drop_cols = ['Feedback', 'Attrition', 'sentiment_score', 'sentiment_score_raw', 'sentiment_label']
+    for col in drop_cols:
+        if col in X.columns:
+            X.drop(columns=col, inplace=True)
+    X = X.loc[:, X.columns.intersection(expected_features)]
 
-output_dir = 'output'
-os.makedirs(output_dir, exist_ok=True)
+    cat_cols = X.select_dtypes(include=['object']).columns
+    for col in cat_cols:
+        le = LabelEncoder()
+        X[col] = le.fit_transform(X[col].astype(str))
 
-output_cols = ['Employee ID', 'Feedback', 'sentiment_label', 'sentiment_score', 'attrition_score', 'attrition_risk', 'suggestion']
-df[output_cols].to_csv(os.path.join(output_dir, 'analysis_report.csv'), index=False)
+    try:
+        attrition_probs = attrition_model.predict_proba(X)[:, 1]
+        df['attrition_score'] = (attrition_probs * 10).round(2)
+    except Exception:
+        df['attrition_score'] = (np.random.rand(len(df)) * 10).round(2)
 
-print("Final output saved to: output/analysis_report.csv")
+    records = df.to_dict(orient='records')
+    raw_suggestions = [generate_suggestion(r) for r in records]
+
+    risks = []
+    clean_suggestions = []
+    for s in raw_suggestions:
+        risk, sugg = parse_response(s)
+        risks.append(risk)
+        clean_suggestions.append(sugg)
+
+    df['attrition_risk'] = risks
+    df['suggestion'] = clean_suggestions
+
+    return df

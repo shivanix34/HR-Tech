@@ -1,5 +1,5 @@
 # .gitignore
 .env
 task1/__pycache__
-.venv
+venv
 task2/__pycache__
